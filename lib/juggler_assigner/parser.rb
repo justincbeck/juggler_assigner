@@ -16,6 +16,8 @@ module JugglerAssigner
         parse_line(line)
       end
 
+      set_preferred_courses
+
       return self.courses, self.jugglers
     end
 
@@ -38,6 +40,17 @@ module JugglerAssigner
     def parse_juggler(line)
       j = JugglerAssigner::Juggler.new(line)
       @jugglers << j
+    end
+
+    def set_preferred_courses
+      @jugglers.each do |j|
+        p_courses = Array.new
+        j.preferences.each do |p|
+          c = @courses.find { |c| c.name.eql? p }
+          p_courses << c
+        end
+        j.preferences = p_courses
+      end
     end
   end
 end
