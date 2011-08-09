@@ -2,27 +2,29 @@ module JugglerAssigner
   class Assigner
 
     @max_team_size
-    @courses
-    @jugglers
-    @failure
+    @revoked
 
     def process(courses = nil, jugglers = nil)
-      @courses = courses unless courses.nil?
-      @jugglers = jugglers unless jugglers.nil?
-      @failure = false
+      @revoked = Array.new
 
       start = Time.new
 
-      @max_team_size = @jugglers.size / @courses.size
+      @max_team_size = jugglers.size / courses.size if @max_team_size.nil?
 
-      @jugglers.each do |j|
-        j.preferences.each do |c|
-          assign_juggler(c, j) unless j.assigned
-        end
-
+      # For each juggler
+      jugglers.each do |j|
         if !j.assigned
-          @courses.sort! { |x, y| j.calculate_dot_product(y) <=> j.calculate_dot_product(x) }.each do |c|
-            assign_juggler(c, j)
+          # First try to assign to a preferred course
+          j.preferences.each do |c|
+            assign_juggler(c, j) unless j.assigned
+          end
+
+          # If I couldn't assign to a preferred course, assign to the best match
+          if !j.assigned
+            # Sort the courses by their dot-product to the current juggler in descending order
+            courses.sort! { |x, y| j.calculate_dot_product(y) <=> j.calculate_dot_product(x) }.each do |c|
+              assign_juggler(c, j) unless j.assigned
+            end
           end
         end
       end
@@ -30,12 +32,10 @@ module JugglerAssigner
       stop = Time.new
       puts "Elapsed time for this run: " + (stop - start).to_s + " seconds"
 
-      puts "There are " + @jugglers.size.to_s + " jugglers remaining..."
-      process unless @jugglers.size == 0 || @failure == true
-      puts "Failure!!!" unless @failure == false
+      process(courses, @revoked) unless @revoked.size == 0
 
       puts "All done!"
-      print
+      print(courses)
 
     end
 
@@ -50,44 +50,50 @@ module JugglerAssigner
     end
 
     def assign_juggler(course, juggler)
-      puts "Course: " + course.name
-      puts "Assign Candidate: " + juggler.name
       if course.jugglers.size < @max_team_size
-        puts "Before: " + @jugglers.size.to_s
+        # If the course has room then go ahead and assign this juggler to it
         juggler.assigned = true
         juggler.assigned_course = course
 
         course.jugglers << juggler
-        puts "Assigned: " + juggler.name
-        puts "After: " + @jugglers.size.to_s
+        puts "Inserting: " + juggler.name + " (" + juggler.calculate_dot_product(course).to_s + ") to " + course.name + " (" + course.jugglers.size.to_s + ")"
+        puts
       else
         force_assign_juggler(course, juggler)
       end
-      puts "*************************************"
     end
 
     def force_assign_juggler(course, juggler)
+
       sorted_jugglers = course.jugglers.sort { |x, y| y.calculate_dot_product(course) <=> x.calculate_dot_product(course) }
       sorted_jugglers.each do |j|
         if juggler.calculate_dot_product(course) > j.calculate_dot_product(course)
-          revoked = sorted_jugglers.delete(sorted_jugglers.last)
+          r = sorted_jugglers.delete(sorted_jugglers.last)
           course.jugglers = sorted_jugglers
-          if !@jugglers.include?(revoked)
-            revoked.assigned = false
-            revoked.assigned_course = nil
+          r.assigned = false
+          r.assigned_course = nil
 
-            @jugglers << revoked
+          @revoked << r
+
+          puts "Revoking: " + r.name + " (" + r.calculate_dot_product(course).to_s + ") from " + course.name + " (" + course.jugglers.size.to_s + ")"
+          revoked_s = "Revoked:"
+          @revoked.each do |i|
+            revoked_s += " "
+            revoked_s += i.name
           end
+          puts revoked_s
 
           assign_juggler(course, juggler)
         end
+        break if juggler.assigned
       end
-      puts "Failed to assign: " + juggler.name
-      @failure = true
+      if !juggler.assigned
+        puts "Failed to assign: " + juggler.name + " to course: " + course.name + " (" + course.jugglers.size.to_s + ")"
+      end
     end
 
-    def print
-      @courses.sort! { |x, y| x.name.slice(/\d+/).to_i <=> y.name.slice(/\d+/).to_i }.each do |c|
+    def print(courses)
+      courses.sort! { |x, y| x.name.slice(/\d+/).to_i <=> y.name.slice(/\d+/).to_i }.each do |c|
         puts "Course Name: " + c.name
         puts "Jugglers (by dot product): "
 
