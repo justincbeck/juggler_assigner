@@ -9,7 +9,7 @@ if ARGV.length == 1
   courses, jugglers = parser.parse
 
   assigner = JugglerAssigner::Assigner.new
-  assigner.process(courses, jugglers)
+  assigner.assign(courses, jugglers)
 else
   puts "Usage: juggler_assigner <file_name>"
 end

@@ -4,10 +4,15 @@ module JugglerAssigner
     @max_team_size
     @revoked
 
-    def process(courses = nil, jugglers = nil)
-      @revoked = Array.new
-
+    def assign(courses, jugglers)
       @max_team_size = jugglers.size / courses.size if @max_team_size.nil?
+      courses = process(courses, jugglers)
+      print(courses)
+      write(courses)
+    end
+
+    def process(courses, jugglers)
+      @revoked = Array.new
 
       jugglers.each do |j|
         if !j.assigned
@@ -25,19 +30,10 @@ module JugglerAssigner
 
       process(courses, @revoked) unless @revoked.size == 0
 
-      print(courses)
-
+      courses
     end
 
     private
-
-    def calculate_dot_product(course, juggler)
-      cp = course.coordination * juggler.coordination
-      ep = course.endurance * juggler.endurance
-      pp = course.pizzazz * juggler.pizzazz
-
-      cp + ep + pp
-    end
 
     def assign_juggler(course, juggler)
       if course.jugglers.size < @max_team_size
@@ -72,11 +68,26 @@ module JugglerAssigner
       courses.sort! { |x, y| x.name.slice(/\d+/).to_i <=> y.name.slice(/\d+/).to_i }.each do |c|
         puts "Course Name: " + c.name
         puts "Jugglers (by dot product): "
-
-        c.jugglers.sort! { |x, y| y.calculate_dot_product(c) <=> x.calculate_dot_product(c) }.each do |j|
-          puts "  " + j.name
+        c.jugglers.sort { |x, y| y.calculate_dot_product(c) <=> x.calculate_dot_product(c) }.each do |j|
+          puts "  " + j.name + " (" + j.dot_product.to_s + ")"
         end
       end
+    end
+
+    def write(courses)
+      out = File.new("../data/output.txt", "w+")
+
+      courses.sort! { |x, y| x.name.slice(/\d+/).to_i <=> y.name.slice(/\d+/).to_i }.each do |c|
+        line = c.name + ":"
+        c.jugglers.sort { |x, y| y.calculate_dot_product(c) <=> x.calculate_dot_product(c) }.each do |j|
+          line += " " + j.name
+        end
+
+        out.write(line + "\n")
+      end
+
+      out.flush
+      out.close
     end
   end
 end
