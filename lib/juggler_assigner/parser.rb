@@ -25,8 +25,7 @@ module JugglerAssigner
       if line[0].eql?("C")
         parse_course(line)
       elsif line[0].eql?("J")
-        juggler = parse_juggler(line)
-        set_preferred_courses(juggler)
+        parse_juggler(line)
       end
     end
 
@@ -37,18 +36,8 @@ module JugglerAssigner
 
 
     def parse_juggler(line)
-      juggler = JugglerAssigner::Juggler.new(line)
+      juggler = JugglerAssigner::Juggler.new(line, @courses)
       @jugglers << juggler
-      juggler
-    end
-
-    def set_preferred_courses(juggler)
-      courses = Array.new
-      juggler.preferences.each do |p|
-        c = @courses.find { |c| c.name.eql? p }
-        courses << c
-      end
-      juggler.preferences = courses
     end
   end
 end

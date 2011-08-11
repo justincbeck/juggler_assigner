@@ -15,15 +15,15 @@ module JugglerAssigner
       @revoked = Array.new
 
       jugglers.each do |j|
-        if !j.assigned
-          j.preferences.each do |c|
-            assign_juggler(c, j) unless j.assigned
-          end
+        j.courses.each do |c|
+          break if j.assigned
+          assign_juggler(c, j)
+        end
 
-          if !j.assigned
-            courses.sort! { |x, y| j.calculate_dot_product(y) <=> j.calculate_dot_product(x) }.each do |c|
-              assign_juggler(c, j) unless j.assigned
-            end
+        if !j.assigned
+          courses.sort! { |x, y| j.dot_product(y) <=> j.dot_product(x) }.each do |c|
+            break if j.assigned
+            assign_juggler(c, j)
           end
         end
       end
@@ -38,8 +38,6 @@ module JugglerAssigner
     def assign_juggler(course, juggler)
       if course.jugglers.size < @max_team_size
         juggler.assigned = true
-        juggler.assigned_course = course
-
         course.jugglers << juggler
       else
         force_assign_juggler(course, juggler)
@@ -47,13 +45,12 @@ module JugglerAssigner
     end
 
     def force_assign_juggler(course, juggler)
-      sorted_jugglers = course.jugglers.sort { |x, y| y.calculate_dot_product(course) <=> x.calculate_dot_product(course) }
+      sorted_jugglers = course.jugglers.sort { |x, y| y.dot_product(course) <=> x.dot_product(course) }
       sorted_jugglers.each do |j|
-        if juggler.calculate_dot_product(course) > j.calculate_dot_product(course)
+        if juggler.dot_product(course) > j.dot_product(course)
           r = sorted_jugglers.delete(sorted_jugglers.last)
           course.jugglers = sorted_jugglers
           r.assigned = false
-          r.assigned_course = nil
 
           @revoked << r
 
@@ -67,8 +64,8 @@ module JugglerAssigner
       courses.sort! { |x, y| x.name.slice(/\d+/).to_i <=> y.name.slice(/\d+/).to_i }.each do |c|
         puts "Course Name: " + c.name
         puts "Jugglers (by dot product): "
-        c.jugglers.sort { |x, y| y.calculate_dot_product(c) <=> x.calculate_dot_product(c) }.each do |j|
-          puts "  " + j.name + " (" + j.dot_product.to_s + ")"
+        c.jugglers.sort { |x, y| y.dot_product(c) <=> x.dot_product(c) }.each do |j|
+          puts "  " + j.name + " (" + j.dot_product(c).to_s + ")"
         end
       end
     end
@@ -77,7 +74,7 @@ module JugglerAssigner
       out = File.new("../data/output.txt", "w+")
       courses.sort! { |x, y| x.name.slice(/\d+/).to_i <=> y.name.slice(/\d+/).to_i }.each do |c|
         line = c.name + ":"
-        c.jugglers.sort { |x, y| y.calculate_dot_product(c) <=> x.calculate_dot_product(c) }.each do |j|
+        c.jugglers.sort { |x, y| y.dot_product(c) <=> x.dot_product(c) }.each do |j|
           line += " " + j.name
         end
         out.write(line + "\n")
