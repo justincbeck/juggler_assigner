@@ -5,7 +5,7 @@ module JugglerAssigner
     @revoked
 
     def assign(courses, jugglers)
-      @max_team_size = jugglers.size / courses.size if @max_team_size.nil?
+      @max_team_size = jugglers.size / courses.size
       assignments = process(courses, jugglers)
       print(assignments) # To stout
       write(assignments) # To ../data/output.txt
