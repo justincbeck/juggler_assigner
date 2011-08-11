@@ -9,7 +9,7 @@ module JugglerAssigner
       self.coordination = parts[2].split(/:/)[1].to_i
       self.endurance = parts[3].split(/:/)[1].to_i
       self.pizzazz = parts[4].split(/:/)[1].to_i
-      self.courses = objectify_preferences(parts[5].split(/,/), all_courses)
+      self.courses = assign_preferred_courses(parts[5].split(/,/), all_courses)
     end
 
     def dot_product(c)
@@ -20,11 +20,10 @@ module JugglerAssigner
       cp + ep + pp
     end
 
-    def objectify_preferences(preferences, all_courses)
+    def assign_preferred_courses(preferences, all_courses)
       courses = Array.new
       preferences.each do |p|
-        c = all_courses.find { |c| c.name.eql? p }
-        courses << c
+        courses << all_courses.find { |c| c.name.eql? p }
       end
       self.courses = courses
     end
