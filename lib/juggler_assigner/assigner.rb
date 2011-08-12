@@ -75,7 +75,7 @@ module JugglerAssigner
       courses.sort! { |x, y| x.name.slice(/\d+/).to_i <=> y.name.slice(/\d+/).to_i }.each do |c|
         line = c.name + ":"
         c.jugglers.sort { |x, y| y.dot_product(c) <=> x.dot_product(c) }.each do |j|
-          line += " " + j.name
+          line += " " + j.name + "(" + j.dot_product(c).to_s + ")"
         end
         out.write(line + "\n")
       end

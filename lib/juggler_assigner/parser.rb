@@ -30,13 +30,13 @@ module JugglerAssigner
     end
 
     def parse_course(line)
-      course = JugglerAssigner::Course.new(line)
+      course = Course.new(line)
       @courses << course
     end
 
 
     def parse_juggler(line)
-      juggler = JugglerAssigner::Juggler.new(line, @courses)
+      juggler = Juggler.new(line, @courses)
       @jugglers << juggler
     end
   end
