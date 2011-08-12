@@ -7,8 +7,7 @@ module JugglerAssigner
     def assign(courses, jugglers)
       @max_team_size = jugglers.size / courses.size
       assignments = process(courses, jugglers)
-      print(assignments) # To stout
-      write(assignments) # To ../data/output.txt
+      write(assignments)
     end
 
     def process(courses, jugglers)
@@ -60,16 +59,6 @@ module JugglerAssigner
       end
     end
 
-    def print(courses)
-      courses.sort! { |x, y| x.name.slice(/\d+/).to_i <=> y.name.slice(/\d+/).to_i }.each do |c|
-        puts "Course Name: " + c.name
-        puts "Jugglers (by dot product): "
-        c.jugglers.sort { |x, y| y.dot_product(c) <=> x.dot_product(c) }.each do |j|
-          puts "  " + j.name + " (" + j.dot_product(c).to_s + ")"
-        end
-      end
-    end
-
     def write(courses)
       out = File.new("../data/output.txt", "w+")
       courses.sort! { |x, y| x.name.slice(/\d+/).to_i <=> y.name.slice(/\d+/).to_i }.each do |c|
@@ -77,6 +66,7 @@ module JugglerAssigner
         c.jugglers.sort { |x, y| y.dot_product(c) <=> x.dot_product(c) }.each do |j|
           line += " " + j.name + "(" + j.dot_product(c).to_s + ")"
         end
+        puts line
         out.write(line + "\n")
       end
       out.flush
