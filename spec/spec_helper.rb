@@ -1,0 +1,1 @@
+require 'juggler_assigner'

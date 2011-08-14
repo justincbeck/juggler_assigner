@@ -20,6 +20,8 @@ module JugglerAssigner
       cp + ep + pp
     end
 
+    private
+
     def assign_preferred_courses(preferences, all_courses)
       courses = Array.new
       preferences.each do |p|
