@@ -5,11 +5,11 @@ module JugglerAssigner
     def initialize line
       parts = line.split /\s/
 
-      self.name = parts[1]
-      self.coordination = parts[2].split(/:/)[1].to_i
-      self.endurance = parts[3].split(/:/)[1].to_i
-      self.pizzazz = parts[4].split(/:/)[1].to_i
-      self.jugglers = Array.new
+      @name = parts[1]
+      @coordination = parts[2].split(/:/)[1].to_i
+      @endurance = parts[3].split(/:/)[1].to_i
+      @pizzazz = parts[4].split(/:/)[1].to_i
+      @jugglers = Array.new
     end
   end
 end

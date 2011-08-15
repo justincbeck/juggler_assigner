@@ -1,5 +1,5 @@
 .idea/
 .bundle
 tmp/**/*
-data/output.txt
+data/*output.txt
 

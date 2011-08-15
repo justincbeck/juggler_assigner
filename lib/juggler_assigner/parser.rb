@@ -1,16 +1,18 @@
 module JugglerAssigner
   class Parser
 
-    attr_accessor :file_name, :courses, :jugglers
+    attr_accessor :courses, :jugglers
+
+    @file_name
 
     def initialize(file_name)
-      self.file_name = file_name
-      self.courses = Array.new
-      self.jugglers = Array.new
+      @file_name = file_name
+      @courses = Array.new
+      @jugglers = Array.new
     end
 
     def parse
-      file = File.new(self.file_name, "r")
+      file = File.new(@file_name, "r")
 
       file.each do |line|
         parse_line(line)

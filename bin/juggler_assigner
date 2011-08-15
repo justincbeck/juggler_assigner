@@ -4,13 +4,13 @@ $LOAD_PATH.unshift File.expand_path('../../lib', __FILE__)
 require 'bundler/setup'
 require 'juggler_assigner'
 
-if ARGV.length == 1
+if ARGV.length == 2
   parser = JugglerAssigner::Parser.new(ARGV[0])
   courses, jugglers = parser.parse
 
-  assigner = JugglerAssigner::Assigner.new
+  assigner = JugglerAssigner::Assigner.new(ARGV[1])
   assigner.assign(courses, jugglers)
 else
-  puts "Usage: juggler_assigner <file_name>"
+  puts "Usage: juggler_assigner <in_file> <out_file>"
 end
 

@@ -1,14 +1,21 @@
 module JugglerAssigner
   class Assigner
 
+    @outfile
     @max_team_size
     @revoked
+
+    def initialize outfile
+      @outfile = outfile
+    end
 
     def assign(courses, jugglers)
       @max_team_size = jugglers.size / courses.size
       assignments = process(courses, jugglers)
       write(assignments)
     end
+
+    private
 
     def process(courses, jugglers)
       @revoked = Array.new
@@ -31,8 +38,6 @@ module JugglerAssigner
 
       courses
     end
-
-    private
 
     def assign_juggler(course, juggler)
       if course.jugglers.size < @max_team_size
@@ -60,7 +65,7 @@ module JugglerAssigner
     end
 
     def write(courses)
-      out = File.new("../data/output.txt", "w+")
+      out = File.new(@outfile, "w+")
       courses.sort! { |x, y| x.name.slice(/\d+/).to_i <=> y.name.slice(/\d+/).to_i }.each do |c|
         line = c.name + ":"
         c.jugglers.sort { |x, y| y.dot_product(c) <=> x.dot_product(c) }.each do |j|
