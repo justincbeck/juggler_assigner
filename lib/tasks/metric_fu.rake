@@ -23,7 +23,8 @@ MetricFu::Configuration.run do |config|
                                        "--text-coverage",
                                        "--no-color",
                                        "--profile",
-                                       "--exclude /gems/,/Library/,/usr/,spec" ],
+                                       "--exclude /gems/,/Library/,/usr/",
+                                       "--include spec"],
                         :external => nil
                       }
     config.graph_engine = :bluff

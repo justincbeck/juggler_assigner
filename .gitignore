@@ -2,4 +2,4 @@
 .bundle
 tmp/
 data/*output.txt
-
+coverage/
