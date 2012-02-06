@@ -1,6 +1,6 @@
-if [[ -d "$rvm_path/environments" && -s "$rvm_path/environments/ruby-1.9.2-p136@juggler_assigner" ]] ; then
-  \. "$rvm_path/environments/ruby-1.9.2-p136@juggler_assigner"
+if [[ -d "$rvm_path/environments" && -s "$rvm_path/environments/ruby-1.9.3-p0@juggler_assigner" ]] ; then
+  \. "$rvm_path/environments/ruby-1.9.3-p0@juggler_assigner"
 else
-  rvm --create use  "ruby-1.9.2-p136@juggler_assigner"
+  rvm --create use  "ruby-1.9.3-p0@juggler_assigner"
 fi
 
