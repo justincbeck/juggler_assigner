@@ -3,3 +3,4 @@
 tmp/
 data/*output.txt
 coverage/
+output/
