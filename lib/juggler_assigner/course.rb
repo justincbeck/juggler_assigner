@@ -2,7 +2,7 @@ module JugglerAssigner
   class Course
     attr_accessor :name, :coordination, :endurance, :pizzazz, :jugglers
 
-    def initialize line
+    def initialize(line)
       parts = line.split /\s/
 
       @name = parts[1]

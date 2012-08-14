@@ -5,7 +5,7 @@ module JugglerAssigner
     @max_team_size
     @revoked
 
-    def initialize outfile
+    def initialize(outfile)
       @outfile = outfile
     end
 
@@ -26,7 +26,7 @@ module JugglerAssigner
           assign_juggler(c, j)
         end
 
-        if !j.assigned
+        unless j.assigned
           courses.sort! { |x, y| j.dot_product(y) <=> j.dot_product(x) }.each do |c|
             break if j.assigned
             assign_juggler(c, j)
