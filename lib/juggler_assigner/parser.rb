@@ -24,9 +24,9 @@ module JugglerAssigner
     private
 
     def parse_line(line)
-      if line[0].eql?("C")
+      if line[0].eql?("N")
         parse_course(line)
-      elsif line[0].eql?("J")
+      elsif line[0].eql?("H")
         parse_juggler(line)
       end
     end

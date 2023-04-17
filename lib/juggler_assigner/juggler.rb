@@ -10,7 +10,7 @@ module JugglerAssigner
       @coordination = parts[2].split(/:/)[1].to_i
       @endurance = parts[3].split(/:/)[1].to_i
       @pizzazz = parts[4].split(/:/)[1].to_i
-      @courses = assign_preferred_courses(parts[5].split(/,/), all_courses)
+      @courses = assign_preferred_courses(parts[5].split(/>/), all_courses)
     end
 
     def dot_product(c)
